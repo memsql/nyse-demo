@@ -1,42 +1,72 @@
 from scipy import stats
-import numpy as np
-from memsql.common import database
-import time, sys, signal
-import argparse
+from memsql.common import connection_pool
+import time, sys, signal, argparse
+
+TICKERS = [
+    'BLAH', 'DUH', 'UM', 'UHH', 'ERR',
+    'WUT', 'LOL', 'DERP', 'UP', 'DOWN'
+]
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--ticker', help='specify the database containing ask_quotes and bid_quotes tables', default='BLAH')
+parser.add_argument('--ticker', help='Specify the ticker to investigate.', choices=TICKERS)
+parser.add_argument('--db', help='Specify the database.', default='stocks')
+parser.add_argument('--host', help='Specify the database host.', type=str, default='127.0.0.1')
+parser.add_argument('--user', help='Specify the database user.', type=str, default='root')
+parser.add_argument('--port', help='Specify the database port.', type=int, default=3306)
+parser.add_argument('--password', help='Specify the database user password.', default='')
 args = parser.parse_args()
 ticker = args.ticker
 
-print "Press ctrl+c to stop..."
+pool = connection_pool.ConnectionPool()
+db_args = [args.host, args.port, args.user, args.password, args.db]
+fails = 0
+
 
 def signal_handler(signal, frame):
     print '\nExiting...'
     sys.exit(0)
-    
-signal.signal(signal.SIGINT, signal_handler)
 
-fails = 0
 
-while True:
-    with database.connect(host="127.0.0.1", port=3306, user = "root", database = "stocks") as conn:
-        a = conn.query('SELECT ask_price, timestamp FROM ask_view JOIN (SELECT Avg(ask_price) avg_ask FROM ask_view WHERE ticker = "{0}") avg JOIN (SELECT Std(ask_price) std_ask FROM ask_view WHERE ticker = "{0}") std where ticker = "{0}" AND abs(ask_price - avg.avg_ask) < (std.std_ask);'.format(ticker)) 
-        x = [a[i]['timestamp'] for i in range(len(a)-1)]
-        y = [a[i]['ask_price'] for i in range(len(a)-1)]
-    
-    try:
-        slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
-        fails = 0
-        print '\nTicker: ' + ticker
-        print 'Time: ' + str(time.time())
-        print 'Slope: ' + str(slope)
-        print 'R squared: ' + str(r_value**2)
-        print 'Standard error: ' + str(std_err)
-        print '\n-------------------------------'
-    except ValueError:
-        fails += 1
-        print 'The query returned an invalid value, probably because `ask_view` is empty.'
-        if (fails > 9):
-            print "Too many fails. Exiting..."
-            sys.exit(0)
+def regress():
+    fails = 0
+
+    while True:
+        with pool.connect(*db_args) as c:
+            a = c.query('''
+    SELECT ask_price, ts
+    FROM ask_view
+    JOIN (
+        SELECT AVG(ask_price) avg_ask
+        FROM ask_view WHERE ticker = "{0}") avg
+        JOIN (
+            SELECT STD(ask_price) std_ask
+            FROM ask_view
+            WHERE ticker = "{0}"
+        ) std
+    WHERE ticker = "{0}"
+    AND ABS(ask_price - avg.avg_ask) < (std.std_ask);
+    '''.format(ticker))
+            x = [a[i]['ts'] for i in range(len(a)-1)]
+            y = [a[i]['ask_price'] for i in range(len(a)-1)]
+
+        try:
+            slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+            print '\nTicker: ' % ticker
+            print 'Time: %s' % time.time()
+            print 'Slope: %s' % slope
+            print 'R squared: %s' % r_value**2
+            print 'Standard error: %s' % std_err
+            print '\n-------------------------------'
+        except ValueError:
+            fails += 1
+            print 'The query returned an invalid value, probably because `ask_view` is empty.'
+
+            if (fails > 9):
+                print "Too many fails. Exiting..."
+                sys.exit(0)
+
+
+if __name__ == '__main__':
+    print "Press CTRL+C to stop."
+    signal.signal(signal.SIGINT, signal_handler)
+    regress()

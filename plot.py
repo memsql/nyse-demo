@@ -6,13 +6,18 @@ import matplotlib
 # Force matplotlib to not use any Xwindows backend.
 import matplotlib.pyplot as plt
 
+TICKERS = [
+    'BLAH', 'DUH', 'UM', 'UHH', 'ERR',
+    'WUT', 'LOL', 'DERP', 'UP', 'DOWN'
+]
+
 parser = argparse.ArgumentParser()
+parser.add_argument('--ticker', help='Specify the ticker to investigate.', choices=TICKERS, default=TICKERS[0])
 parser.add_argument('--db', help='Specify the database.', default='stocks')
 parser.add_argument('--host', help='Specify the database host.', type=str, default='127.0.0.1')
 parser.add_argument('--user', help='Specify the database user.', type=str, default='root')
 parser.add_argument('--port', help='Specify the database port.', type=int, default=3306)
 parser.add_argument('--password', help='Specify the database user password.', default='')
-parser.add_argument('--ticker', help='specify the database containing ask_quotes and bid_quotes tables', default='BLAH')
 args = parser.parse_args()
 
 pool = connection_pool.ConnectionPool()

@@ -10,7 +10,7 @@ parser.add_argument('--user', help='Specify the database user.', type=str, defau
 parser.add_argument('--port', help='Specify the database port.', type=int, default=3306)
 parser.add_argument('--password', help='Specify the database user password.', default='')
 parser.add_argument('--iters', help='Number of iterations for the generator.', type=int, default=100)
-parser.add_argument('--batch', help='The insert batch size.', type=int, default=100)
+parser.add_argument('--batch', help='The insert batch size.', type=int, default=1000)
 parser.add_argument('--base', help='The base value of each ticker.', type=int, default=5000)
 parser.add_argument('--max', help='Maximum price change.', type=int, default=1)
 args = parser.parse_args()

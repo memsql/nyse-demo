@@ -1,8 +1,12 @@
 from memsql.common import database, connection_pool
 import argparse
 
+TICKERS = [
+    'BLAH', 'DUH', 'UM', 'UHH', 'ERR',
+    'WUT', 'LOL', 'DERP', 'UP', 'DOWN'
+]
 parser = argparse.ArgumentParser()
-parser.add_argument('--ticker', help='specify the database containing ask_quotes and bid_quotes tables', default='BLAH')
+parser.add_argument('--ticker', help='Specify the ticker to investigate.', choices=TICKERS, default=TICKERS[0])
 args = parser.parse_args()
 ticker = args.ticker
 

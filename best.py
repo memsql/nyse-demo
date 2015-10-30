@@ -14,7 +14,7 @@ best_asks_per_exchange = "SELECT ticker, ask_price, max(ask_size) AS ask_size, e
 best_bids = "SELECT ticker, bid_price, bid_size, exchange, timestamp FROM bid_view WHERE ticker='%(ticker)s' ORDER BY bid_price DESC, bid_size DESC LIMIT 10;" % t
 best_bids_per_exchange = "SELECT ticker, bid_price, max(bid_size) AS bid_size, exchange, timestamp FROM bid_view INNER JOIN (SELECT max(bid_price) AS bid_price, exchange, ticker FROM bid_view WHERE ticker='%(ticker)s' GROUP BY exchange) AS t2 USING (ticker, exchange, bid_price) WHERE ticker='%(ticker)s' GROUP BY exchange;" % t
 
-with pool.connect('127.0.0.1', 13306, 'root', '', 'stocks') as conn:
+with pool.connect('127.0.0.1', 3306, 'root', '', 'stocks') as conn:
     ba = conn.query(best_asks)
     bape = conn.query(best_asks_per_exchange)
     bb = conn.query(best_bids)

@@ -4,7 +4,6 @@ import sys, signal, argparse
 import matplotlib
 
 # Force matplotlib to not use any Xwindows backend.
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()

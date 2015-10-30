@@ -51,7 +51,7 @@ def regress():
 
         try:
             slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
-            print '\nTicker: ' % ticker
+            print '\nTicker: %s' % ticker
             print 'Time: %s' % time.time()
             print 'Slope: %s' % slope
             print 'R squared: %s' % r_value**2

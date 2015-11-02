@@ -43,6 +43,8 @@ def plot():
         plt.plot(tsa, apa, 'ro', label='Ask quotes')
         plt.plot(tsb, apb, 'bo', label='Bid quotes')
         plt.title('Bids and Asks for %s' % args.ticker)
+        plt.ylabel("Quote price")
+        plt.xlabel("Unix timestamp")
         plt.legend(numpoints=1)
 
         plt.show()

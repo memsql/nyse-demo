@@ -32,16 +32,19 @@ def regress():
         with pool.connect(*db_args) as c:
             a = c.query('''
     SELECT ask_price, ts
-    FROM ask_view
+    FROM (
+        SELECT * 
+        FROM ask_quotes
+        ORDER BY ts DESC LIMIT 10000) window
     JOIN (
         SELECT AVG(ask_price) avg_ask
-        FROM ask_view WHERE ticker = "{0}") avg
-        JOIN (
+        FROM ask_quotes WHERE ticker = "{0}") avg
+    JOIN (
             SELECT STD(ask_price) std_ask
-            FROM ask_view
-            WHERE ticker = "{0}"
-        ) std
-    WHERE ticker="{0}";
+            FROM ask_quotes
+            WHERE ticker = "{0}") std
+    WHERE ticker="{0}"
+        AND abs(ask_price - avg.avg_ask) < (std.std_ask);
     '''.format(args.ticker))
             x = [a[i]['ts'] for i in range(len(a)-1)]
             y = [a[i]['ask_price'] for i in range(len(a)-1)]

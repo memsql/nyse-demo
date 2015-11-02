@@ -1,10 +1,6 @@
 CREATE DATABASE IF NOT EXISTS stocks;
 USE stocks;
 
-DROP VIEW IF EXISTS `ask_view`;
-DROP VIEW IF EXISTS `bid_view`;
-DROP TABLE IF EXISTS `bid_temp`;
-DROP TABLE IF EXISTS `ask_temp`;
 DROP TABLE IF EXISTS `bid_quotes`;
 DROP TABLE IF EXISTS `ask_quotes`;
 
@@ -27,13 +23,3 @@ CREATE TABLE `bid_quotes` (
     KEY `ticker` (`ticker`,`ts`),
     /*!90618 SHARD */ KEY `ticker_2` (`ticker`)
 );
-
-CREATE VIEW ask_view as
-SELECT ticker, ts, ask_price, ask_size, exchange
-FROM ask_quotes
-WHERE (`ask_quotes`.`ts` > ((UNIX_TIMESTAMP() - 1) * 100000));
-
-CREATE VIEW bid_view as
-SELECT ticker, ts, bid_price, bid_size, exchange
-FROM bid_quotes
-WHERE (`bid_quotes`.`ts` > ((UNIX_TIMESTAMP() - 1 ) * 100000));

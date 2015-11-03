@@ -4,10 +4,11 @@ from memsql.common import connection_pool
 from threading import Thread, Event
 from collections import namedtuple
 import sys, time, random, signal, itertools, argparse, Queue
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--db', help='Specify the database.', default='stocks')
-parser.add_argument('--host', help='Specify the database host.', type=str, default='127.0.0.1')
+parser.add_argument('--host', help='Specify the database host.', type=str, default=os.environ.get('MEMSQL_PORT_3306_TCP_ADDR', '127.0.0.1'))
 parser.add_argument('--user', help='Specify the database user.', type=str, default='root')
 parser.add_argument('--port', help='Specify the database port.', type=int, default=3306)
 parser.add_argument('--password', help='Specify the database user password.', default='')
@@ -44,7 +45,7 @@ def _insert_worker():
             c.execute(ins)
 
 def _signal_handler(signal, frame):
-    print '\nExiting...'
+    print('\nExiting...')
     done.set()
     sys.exit(0)
 
@@ -53,9 +54,9 @@ if __name__ == '__main__':
     workers = [Thread(target=_insert_worker) for _ in range(5)]
 
     signal.signal(signal.SIGINT, _signal_handler)
-    print "Press CTRL+C to stop generator."
+    print("Press CTRL+C to stop generator.")
 
-    print '\nStarting...'
+    print('\nStarting...')
     for w in workers:
         w.start()
 
@@ -115,8 +116,8 @@ if __name__ == '__main__':
 
         total_inserts = float(num_asks + num_bids)
 
-        print "\nGenerated and inserted %d records in %d seconds." % (total_inserts, total_time)
-        print "%s quotes/second" % str(total_inserts / total_time)
-        print "%s quotes/NYSE trading day" % ((total_inserts / total_time) * SECS_IN_NYSE_DAY)
+        print("\nGenerated and inserted %d records in %d seconds." % (total_inserts, total_time))
+        print("%s quotes/second" % str(total_inserts / total_time))
+        print("%s quotes/NYSE trading day" % ((total_inserts / total_time) * SECS_IN_NYSE_DAY))
 
     pool.close()

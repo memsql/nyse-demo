@@ -1,15 +1,6 @@
 # Simple NYSE Simulator
 
-## Dependencies
-
-Before running the code, make sure we have all of the dependencies
-needed for this example by running:
-
-```
-sudo apt-get install gfortran libopenblas-dev liblapack-dev libmysqlclient-dev python-numpy python-scipy python-matplotlib ipython
-python-imaging-tk ipython-notebook python-pandas python-sympy python-nose libfreetype6-dev;
-make deps;
-```
+This simple NYSE demo uses Jupyter notebooks.
 
 ## Setup the database
 
@@ -21,7 +12,7 @@ demo needs run the following command against your MemSQL master aggregator:
 mysql ...connection arguments... < schema.sql
 ```
 
-## Usage from Docker
+## Usage from Docker, with Jupyter notebooks
 
 Optionally, rather than installing the dependencies on your base system (and
 running the code on your system), you can build and run the included Dockerfile
@@ -36,5 +27,7 @@ docker build -t nyse-demo .
 ```
 docker run nyse-demo gen.py --host <MEMSQL HOST> --user <MEMSQL USER>
 ```
+
+### Setting up Docker gateways
 
 ### Run regression analysis on data

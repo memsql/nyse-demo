@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from memsql.common import connection_pool
 from threading import Thread, Event
 from collections import namedtuple
@@ -31,19 +33,15 @@ db_args = [args.host, args.port, args.user, args.password, args.db]
 done = Event()
 Quote = namedtuple("Quote", ("ticker", "ts", "price", "size", "exchange"))
 
-
-
 def _make_query(quotes, table):
     return ('INSERT INTO %s VALUE' % table) + \
         (','.join(['("%s", %f, %d, %d, "%s")'] * args.batch) % tuple(quotes))
-
 
 def _insert_worker():
     while not done.is_set():
         with pool.connect(*db_args) as c:
             ins = inserts.get()
             c.execute(ins)
-
 
 def _signal_handler(signal, frame):
     print '\nExiting...'
@@ -76,7 +74,7 @@ if __name__ == '__main__':
                 t = time.time() * 100000
                 log = random.lognormvariate(1, .25)
                 s = random.randrange(1, 100, 1)
-                x = EXCHANGES[i%5]
+                x = EXCHANGES[i % 5]
                 asks.append(
                     Quote(ticker=ticker, ts=t, price=(price + log), size=s, exchange=x)
                 )
@@ -104,15 +102,17 @@ if __name__ == '__main__':
 
     with pool.connect(*db_args) as c:
         num_asks = c.query('''
-SELECT COUNT(*) AS c
-FROM ask_quotes
-WHERE ts > %d;
+            SELECT COUNT(*) AS c
+            FROM ask_quotes
+            WHERE ts > %d;
         ''' % start_time)[0].c
+
         num_bids = c.query('''
-SELECT COUNT(*) AS c
-FROM bid_quotes
-WHERE ts > %d;
+            SELECT COUNT(*) AS c
+            FROM bid_quotes
+            WHERE ts > %d;
         ''' % start_time)[0].c
+
         total_inserts = float(num_asks + num_bids)
 
         print "\nGenerated and inserted %d records in %d seconds." % (total_inserts, total_time)

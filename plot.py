@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from memsql.common import connection_pool
 from scipy import stats
 import sys, signal, argparse

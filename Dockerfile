@@ -1,12 +1,10 @@
-FROM python:2.7.10-wheezy
+FROM jupyter/scipy-notebook
 
-RUN apt-get update && apt-get install -y gfortran liblapack-dev libmysqlclient-dev \
-    python-numpy python-scipy python-matplotlib python-imaging-tk python-sympy \
-    python-nose libfreetype6-dev
+RUN apt-get update && apt-get install -yq libmysqlclient-dev
 
-ADD Makefile README.md best.py gen.py plot.py regress.py requirements.txt schema.sql /nyse-demo/
+ADD requirements.txt ./requirements.txt
+RUN /bin/bash -c "source activate python2 && pip install -r requirements.txt"
 
-WORKDIR /nyse-demo
-RUN virtualenv venv
-RUN . venv/bin/activate
-RUN pip install -r requirements.txt
+ENV PATH /nyse-demo:$PATH
+ADD . /home/jovyan/work
+RUN chown -R jovyan:users /home/jovyan

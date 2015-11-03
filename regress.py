@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from scipy import stats
 from memsql.common import connection_pool
 import time, sys, signal, argparse
@@ -31,30 +33,31 @@ def regress():
     while True:
         with pool.connect(*db_args) as c:
             a = c.query('''
-    SELECT ask_price, ts
-    FROM (
-        SELECT * 
-        FROM ask_quotes
-        ORDER BY ts DESC LIMIT 10000) window
-    JOIN (
-        SELECT AVG(ask_price) avg_ask
-        FROM ask_quotes WHERE ticker = "{0}") avg
-    JOIN (
-            SELECT STD(ask_price) std_ask
-            FROM ask_quotes
-            WHERE ticker = "{0}") std
-    WHERE ticker="{0}"
-        AND abs(ask_price - avg.avg_ask) < (std.std_ask);
-    '''.format(args.ticker))
-            x = [a[i]['ts'] for i in range(len(a)-1)]
-            y = [a[i]['ask_price'] for i in range(len(a)-1)]
+                SELECT ask_price, ts
+                FROM (
+                    SELECT *
+                    FROM ask_quotes
+                    ORDER BY ts DESC LIMIT 10000) window
+                JOIN (
+                    SELECT AVG(ask_price) avg_ask
+                    FROM ask_quotes WHERE ticker = "{0}") avg
+                JOIN (
+                        SELECT STD(ask_price) std_ask
+                        FROM ask_quotes
+                        WHERE ticker = "{0}") std
+                WHERE ticker="{0}"
+                    AND abs(ask_price - avg.avg_ask) < (std.std_ask);
+            '''.format(args.ticker))
+
+            x = [a[i]['ts'] for i in range(len(a) - 1)]
+            y = [a[i]['ask_price'] for i in range(len(a) - 1)]
 
         if len(a) > 0:
-            slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+            slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
             print '\nTicker: %s' % args.ticker
             print 'Time: %s' % time.time()
             print 'Slope: %s' % slope
-            print 'R squared: %s' % r_value**2
+            print 'R squared: %s' % r_value ** 2
             print 'Standard error: %s' % std_err
             print '\n-------------------------------'
         else:

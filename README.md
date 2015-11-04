@@ -26,6 +26,7 @@ docker pull memsql/nyse-demo
 ```
 docker run --link memsql nyse-demo gen.py
 ```
+This will generate around 500000 new records each time it's run.
 
 ### Run the main container:
 

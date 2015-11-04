@@ -16,7 +16,7 @@ Then create the database schema:
 cat schema.sql | docker run -i --link=memsql:memsql memsql/quickstart memsql-shell
 ```
 
-## Pull and run the nyse-demo container:
+## Getting started with the nyse-demo container:
 ```
 docker pull memsql/nyse-demo
 ```

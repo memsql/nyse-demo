@@ -3,7 +3,7 @@
 ## Setup the database
 
 To run the nyse-demo you need to have a running MemSQL cluster (or single
-node), and the included schema. The easiest way to get it is to pull the memsql-docker-quickstart image:
+node), and the included schema. The easiest way to get it is to pull the [memsql-docker-quickstart](https://github.com/memsql/memsql-docker-quickstart) image:
 
 ```
 docker pull memsql/quickstart

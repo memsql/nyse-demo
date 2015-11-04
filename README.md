@@ -33,15 +33,5 @@ docker run --link memsql nyse-demo gen.py
 docker run -d --name nyse-demo -p 8888:8888 --link memsql nyse-demo
 ```
 
-### Setting up Docker gateways
-
-Run the Docker image:
-```
-docker run -d --name nyse-demo -p 8888:8888 nyse-demo
-```
-
-On Linux, you will now be able to connect to localhost:8888 from the browser, and run nyse_demo.ipynb.
-
-Otherwise, find the Docker VM IP address, and from the browser open VM_IP:8888.
-
-From there, open the IPython notebook nyse_demo.ipynb.
+On Linux, you'll now be able to open localhost:8888 in your browser. On Windows and OS X,
+find the Docker VM IP address, and open VM_IP:8888. Then open the nyse_demo.ipynb notebook.

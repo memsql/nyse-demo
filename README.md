@@ -16,20 +16,21 @@ Then create the database schema:
 cat schema.sql | docker run -i --link=memsql:memsql memsql/quickstart memsql-shell
 ```
 
-## Usage from Docker, with Jupyter notebooks
-
-Optionally, rather than installing the dependencies on your base system (and
-running the code on your system), you can build and run the included Dockerfile
-which includes all dependencies:
-
+## Pull and run the nyse-demo container:
 ```
-docker build -t nyse-demo .
+docker pull memsql/nyse-demo
 ```
 
 ### Generate data:
 
 ```
-docker run nyse-demo gen.py --host <MEMSQL HOST> --user <MEMSQL USER>
+docker run --link memsql nyse-demo gen.py
+```
+
+### Run the main container:
+
+```
+docker run -d --name nyse-demo -p 8888:8888 --link memsql nyse-demo
 ```
 
 ### Setting up Docker gateways

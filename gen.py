@@ -3,7 +3,7 @@
 from memsql.common import connection_pool
 from threading import Thread, Event
 from collections import namedtuple
-import sys, time, random, signal, itertools, argparse, Queue
+import sys, time, random, signal, itertools, argparse, queue
 import os
 
 parser = argparse.ArgumentParser()
@@ -28,7 +28,7 @@ EXCHANGES = [
     'NYS', 'LON', 'NASDAQ', 'TYO', 'FRA'
 ]
 
-inserts = Queue.Queue()
+inserts = queue.Queue()
 pool = connection_pool.ConnectionPool()
 db_args = [args.host, args.port, args.user, args.password, args.db]
 done = Event()

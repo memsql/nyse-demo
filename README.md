@@ -3,11 +3,17 @@
 ## Setup the database
 
 To run the nyse-demo you need to have a running MemSQL cluster (or single
-node), and the included schema.  To quickly create the "stocks" database this
-demo needs run the following command against your MemSQL master aggregator:
+node), and the included schema. The easiest way to get it is to pull the memsql-docker-quickstart image:
 
 ```
-mysql ...connection arguments... < schema.sql
+docker pull memsql/quickstart
+docker run -d -p 3306:3306 -p 9000:9000 --name=memsql memsql/quickstart
+```
+
+Then create the database schema:
+
+```
+cat schema.sql | docker run -i --link=memsql:memsql memsql/quickstart memsql-shell
 ```
 
 ## Usage from Docker, with Jupyter notebooks

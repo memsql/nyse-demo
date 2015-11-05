@@ -24,7 +24,7 @@ docker pull memsql/nyse-demo
 ### Generate data:
 
 ```
-docker run --link memsql nyse-demo gen.py --iters 1000
+docker run --link memsql nyse-demo gen.py
 ```
 This will generate a large number of new records each time it is run.
 
